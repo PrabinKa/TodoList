@@ -3,11 +3,13 @@ import { createMMKV } from 'react-native-mmkv';
 import { persistReducer, persistStore, Storage } from 'redux-persist';
 import { TokenReducer } from './slice/token';
 import { UserDetailsReducer } from './slice/userDetails';
+import { UsersListReducer } from './slice/usersList';
 
 
 const reducers = combineReducers({
   token: TokenReducer,
-  userDetails: UserDetailsReducer
+  userDetails: UserDetailsReducer,
+  usersList: UsersListReducer
 });
 
 const ENCRYPTION_KEY = 'secured_token';
@@ -37,7 +39,8 @@ const persistConfig = {
   storage: reduxStorage,
   whitelist: [
     'token',
-    'userDetails'
+    'userDetails',
+    'usersList'
   ],
 };
 

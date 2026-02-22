@@ -6,9 +6,9 @@ const Stack = createNativeStackNavigator();
 
 const AuthenticatedNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}} >
-        <Stack.Screen name='LodoList' component={TodoListScreen} />
-    </Stack.Navigator>
+      <Stack.Navigator screenOptions={{headerShown: false}} >
+          <Stack.Screen name='LodoList' component={TodoListScreen} />
+      </Stack.Navigator>
   )
 }
 

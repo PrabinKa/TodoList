@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ButtonComponent, InputField } from '../../components';
 import { colors } from '../../theme/colors';
 import { getFontSize, rSpacing } from '../../utils';
-import { getUsersList } from '../../services/api';
-import { useQuery } from '@tanstack/react-query';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../store/store';
 import { User } from '../../types/users';
 import { generateAccessToken } from '../../utils/auth';
-import { useDispatch } from 'react-redux';
 import { tokenActions } from '../../store/slice/token';
 import { userDetailsActions } from '../../store/slice/userDetails';
 
@@ -18,10 +25,11 @@ interface LoginScreenProps {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { data, isLoading } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: getUsersList,
-  });
+  // Users list
+  const usersList = useSelector(
+    (state: RootState) => state.usersList.usersList,
+  );
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
 
   const [loginCredentials, setLoginCredentials] = useState({
     email: '',
@@ -45,69 +53,86 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       return false;
     }
 
-    if (!data) {
-      setError('Users data not loaded yet.');
-      return false;
-    }
-
     return true;
   };
 
 const handleLogin = () => {
   setError('');
+  setIsLoginLoading(true);
 
-  if (!validateForm()) return;
-
-  const matchedUser = data!.find(
-    (user: User) =>
-      user.email.toLowerCase() ===
-      loginCredentials.email.trim().toLowerCase(),
-  );
-
-  if (!matchedUser) {
-    setError('Your credentials do not match, please try again.');
+  if (!validateForm()) {
+    setIsLoginLoading(false);
     return;
   }
 
-  const accessToken = generateAccessToken(40);
+  try {
+    const matchedUser = usersList.find(
+      (user: User) =>
+        user.email.toLowerCase() === loginCredentials.email.trim().toLowerCase()
+    );
 
-  // Dispatch token
-  dispatch(tokenActions.setAccessToken(accessToken));
+    if (!matchedUser) {
+      setError('Your credentials do not match, please try again.');
+      return;
+    }
 
-  // Dispatch matched user object
-  dispatch(userDetailsActions.setUserDetails(matchedUser));
+    // Generate access token
+    const accessToken = generateAccessToken(40);
 
-  navigation.navigate('Auth');
+    // Dispatch to Redux slices
+    dispatch(tokenActions.setAccessToken(accessToken));
+    dispatch(userDetailsActions.setUserDetails(matchedUser));
+
+    // Navigate to authenticated stack
+    navigation.replace('Auth');
+  } catch (err) {
+    console.error('Login error:', err);
+    setError('Something went wrong. Please try again.');
+  } finally {
+    setIsLoginLoading(false);
+  }
 };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.welcomeTextStyles}>
-        Welcome back, please signin to continue
-      </Text>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <KeyboardAvoidingView style={{ flex: 1 }}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <Text style={styles.welcomeTextStyles}>
+              Welcome back, please signin to continue
+            </Text>
 
-      <View>
-        <InputField
-          label="Email"
-          placeholder="Enter your email"
-          onChangeText={(text: string) => handleChange('email', text)}
-        />
+            <View>
+              <InputField
+                label="Email"
+                value={loginCredentials.email}
+                placeholder="Enter your email"
+                onChangeText={(text: string) => handleChange('email', text)}
+              />
 
-        <InputField
-          label="Password"
-          placeholder="Enter password"
-          secureTextEntry
-          onChangeText={(text: string) => handleChange('password', text)}
-        />
-      </View>
+              <InputField
+                label="Password"
+                value={loginCredentials.password}
+                placeholder="Enter password"
+                secureTextEntry
+                onChangeText={(text: string) => handleChange('password', text)}
+              />
+            </View>
 
-      {!!error && <Text style={styles.errorTextStyles}>{error}</Text>}
+            {!!error && <Text style={styles.errorTextStyles}>{error}</Text>}
 
-      <ButtonComponent
-        label="Sign In"
-        isLoading={isLoading}
-        onPress={handleLogin}
-      />
+            <ButtonComponent
+              label="Sign In"
+              isLoading={isLoginLoading}
+              onPress={handleLogin}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
@@ -118,17 +143,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.primary,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
     paddingHorizontal: rSpacing(20),
     paddingVertical: rSpacing(15),
-    gap: 20,
   },
   welcomeTextStyles: {
     fontSize: getFontSize(20),
     fontWeight: '500',
     color: colors.grayDark,
+    marginBottom: rSpacing(40),
   },
   errorTextStyles: {
     fontSize: getFontSize(14),
     color: colors.error,
+    marginBottom: rSpacing(10),
   },
 });

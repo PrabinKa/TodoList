@@ -8,12 +8,13 @@ import SplashScreen from '../../screens/splash_screen/SplashScreen';
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name='SplashScreen' component={SplashScreen} />
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="UnAuth" component={UnAthenticatedNavigator} />
-        <Stack.Screen name="Auth" component={AuthenticatedNavigator} />
+          <Stack.Screen name="Auth" component={AuthenticatedNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

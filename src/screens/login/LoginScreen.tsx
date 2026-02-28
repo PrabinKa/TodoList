@@ -11,13 +11,15 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ButtonComponent, InputField } from '../../components';
 import { colors } from '../../theme/colors';
-import { getFontSize, rSpacing } from '../../utils';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store/store';
-import { User } from '../../types/users';
-import { generateAccessToken } from '../../utils/auth';
-import { tokenActions } from '../../store/slice/token';
+import { getFontSize, rSpacing, SecureStorage } from '../../utils';
+import { TLoginCredentials } from '../../types/login';
+import { useForm, Controller } from 'react-hook-form';
+import { login } from '../../services/api';
+import { useMutation } from '@tanstack/react-query';
+import { STORAGE_KEY } from '../../constants/keys';
+import { useDispatch } from 'react-redux';
 import { userDetailsActions } from '../../store/slice/userDetails';
+import { navigationRef } from '../../utils/navigationRef';
 
 interface LoginScreenProps {
   navigation: any;
@@ -25,73 +27,46 @@ interface LoginScreenProps {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch();
-  // Users list
-  const usersList = useSelector(
-    (state: RootState) => state.usersList.usersList,
-  );
-  const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const [secureTextEntry, setSecureTextEntry] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TLoginCredentials>();
 
-  const [loginCredentials, setLoginCredentials] = useState({
-    email: '',
-    password: '',
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: async data => {
+      const { accessToken, refreshToken, ...user } = data;
+
+      // Store tokens in secure storage with encryption
+      await SecureStorage.setItem(STORAGE_KEY.ACCESS_TOKEN, accessToken);
+      await SecureStorage.setItem(STORAGE_KEY.REFRESH_TOKEN, refreshToken);
+
+      // Dispatch user details to reducer
+      dispatch(userDetailsActions.setUserDetails(user));
+
+      navigationRef.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'AppScreen',
+            state: {
+              routes: [{name: 'TodoList'}]
+            }
+          }
+        ]
+      })
+    },
+    onError: (error: any) => {
+      setLoginError(error?.response?.data?.message);
+    },
   });
 
-  const [error, setError] = useState('');
-
-  const handleChange = (key: keyof typeof loginCredentials, value: string) => {
-    setLoginCredentials(prev => ({
-      ...prev,
-      [key]: value,
-    }));
+  const onSubmit = (data: TLoginCredentials) => {
+    mutation.mutate(data);
   };
-
-  const validateForm = (): boolean => {
-    const { email, password } = loginCredentials;
-
-    if (!email.trim() || !password.trim()) {
-      setError('Both email and password fields are required.');
-      return false;
-    }
-
-    return true;
-  };
-
-const handleLogin = () => {
-  setError('');
-  setIsLoginLoading(true);
-
-  if (!validateForm()) {
-    setIsLoginLoading(false);
-    return;
-  }
-
-  try {
-    const matchedUser = usersList.find(
-      (user: User) =>
-        user.email.toLowerCase() === loginCredentials.email.trim().toLowerCase()
-    );
-
-    if (!matchedUser) {
-      setError('Your credentials do not match, please try again.');
-      return;
-    }
-
-    // Generate access token
-    const accessToken = generateAccessToken(40);
-
-    // Dispatch to Redux slices
-    dispatch(tokenActions.setAccessToken(accessToken));
-    dispatch(userDetailsActions.setUserDetails(matchedUser));
-
-    // Navigate to authenticated stack
-    navigation.replace('Auth');
-  } catch (err) {
-    console.error('Login error:', err);
-    setError('Something went wrong. Please try again.');
-  } finally {
-    setIsLoginLoading(false);
-  }
-};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -107,29 +82,48 @@ const handleLogin = () => {
             </Text>
 
             <View>
-              <InputField
-                label="Email"
-                value={loginCredentials.email}
-                placeholder="Enter your email"
-                onChangeText={(text: string) => handleChange('email', text)}
+              <Controller
+                control={control}
+                name="username"
+                rules={{
+                  required: 'Username is required',
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <InputField
+                    label="User Name"
+                    value={value}
+                    error={errors.username?.message}
+                    placeholder="Enter your username"
+                    onChangeText={onChange}
+                  />
+                )}
               />
-
-              <InputField
-                label="Password"
-                value={loginCredentials.password}
-                placeholder="Enter password"
-                secureTextEntry
-                onChangeText={(text: string) => handleChange('password', text)}
+              <Controller
+                control={control}
+                name="password"
+                rules={{
+                  required: 'Password is required',
+                }}
+                render={({ field: { value, onChange } }) => (
+                  <InputField
+                    label="Password"
+                    value={value}
+                    error={errors.password?.message}
+                    placeholder="Enter password"
+                    secureTextEntry={secureTextEntry}
+                    showPasswordToggle
+                    onTogglePassword={() =>
+                      setSecureTextEntry(!secureTextEntry)
+                    }
+                    onChangeText={onChange}
+                  />
+                )}
               />
             </View>
-
-            {!!error && <Text style={styles.errorTextStyles}>{error}</Text>}
-
-            <ButtonComponent
-              label="Sign In"
-              isLoading={isLoginLoading}
-              onPress={handleLogin}
-            />
+            {!!loginError && (
+              <Text style={styles.errorTextStyle}>{loginError}</Text>
+            )}
+            <ButtonComponent isLoading={mutation.isPending} label="Sign In" onPress={handleSubmit(onSubmit)} />
           </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
@@ -158,6 +152,12 @@ const styles = StyleSheet.create({
   },
   errorTextStyles: {
     fontSize: getFontSize(14),
+    color: colors.error,
+    marginBottom: rSpacing(10),
+  },
+  errorTextStyle: {
+    fontSize: getFontSize(12),
+    fontWeight: 'bold',
     color: colors.error,
     marginBottom: rSpacing(10),
   },

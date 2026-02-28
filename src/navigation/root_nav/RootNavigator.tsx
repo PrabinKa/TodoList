@@ -1,20 +1,20 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AuthenticatedNavigator from '../auth_nav/AuthenticatedNavigator';
-import UnAthenticatedNavigator from '../unauth_nav/UnAthenticatedNavigator';
 import SplashScreen from '../../screens/splash_screen/SplashScreen';
+import AuthNavigator from '../auth_nav/AuthNavigator';
+import AppNavigator from '../app_nav/AppNavigator';
+import { navigationRef } from '../../utils/navigationRef';
 
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
-
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
-        <Stack.Screen name="UnAuth" component={UnAthenticatedNavigator} />
-          <Stack.Screen name="Auth" component={AuthenticatedNavigator} />
+        <Stack.Screen name="AuthScreen" component={AuthNavigator} />
+        <Stack.Screen name="AppScreen" component={AppNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

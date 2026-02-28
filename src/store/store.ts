@@ -1,13 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { createMMKV } from 'react-native-mmkv';
 import { persistReducer, persistStore, Storage } from 'redux-persist';
-import { TokenReducer } from './slice/token';
 import { UserDetailsReducer } from './slice/userDetails';
 import { UsersListReducer } from './slice/usersList';
 
 
 const reducers = combineReducers({
-  token: TokenReducer,
   userDetails: UserDetailsReducer,
   usersList: UsersListReducer
 });
@@ -38,7 +36,6 @@ const persistConfig = {
   key: 'root',
   storage: reduxStorage,
   whitelist: [
-    'token',
     'userDetails',
     'usersList'
   ],

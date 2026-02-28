@@ -12,7 +12,7 @@ interface TodoCardProps {
 const TodoCard: React.FC<TodoCardProps> = ({ item }) => {
   return (
     <View style={styles.itemContainer}>
-      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.title}>{item.todo}</Text>
       {item.completed && (
         <View
           style={{

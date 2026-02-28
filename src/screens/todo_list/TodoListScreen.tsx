@@ -5,17 +5,13 @@ import {
   View,
   FlatList,
   RefreshControl,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { getTodoList } from '../../services/api';
-import { Todo } from '../../types/todo';
+import { Todo, TodoListResponse } from '../../types/todo';
 import { colors } from '../../theme/colors';
-import { getFontSize, rSpacing } from '../../utils';
-import { useDispatch } from 'react-redux';
-import { tokenActions } from '../../store/slice/token';
-import { userDetailsActions } from '../../store/slice/userDetails';
+import { getFontSize, logout, rSpacing } from '../../utils';
 import { TodoCard, TodoFilter, TodoHeader } from '../../components';
 
 interface TodoListScreenProps {
@@ -25,20 +21,22 @@ interface TodoListScreenProps {
 type FilterType = 'all' | 'completed' | 'pending';
 
 const TodoListScreen: React.FC<TodoListScreenProps> = ({ navigation }) => {
-  const dispatch = useDispatch();
   const [filterType, setFilterType] = useState<FilterType>('all');
 
-  const {
-    data: todos,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useQuery<Todo[]>({
+  const { data, isLoading, isFetching, refetch } = useQuery<TodoListResponse>({
     queryKey: ['todos'],
     queryFn: getTodoList,
   });
 
+  console.log('TOODDDO:', data);
+
   const filteredTodos = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    const { todos } = data;
+
     if (!todos) return [];
     switch (filterType) {
       case 'completed':
@@ -48,42 +46,23 @@ const TodoListScreen: React.FC<TodoListScreenProps> = ({ navigation }) => {
       default:
         return todos;
     }
-  }, [todos, filterType]);
+  }, [data, filterType]);
 
   const renderItem = useCallback(
     ({ item }: { item: Todo }) => <TodoCard item={item} />,
     [],
   );
 
-  const logoutHandler = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'OK',
-          onPress: () => {
-            dispatch(tokenActions.clearAccessToken());
-            dispatch(userDetailsActions.clearUserDetails());
-            navigation.replace('UnAuth');
-          },
-        },
-      ],
-      { cancelable: false },
-    );
-  };
-
   return (
     <SafeAreaView edges={['top', 'bottom']} style={styles.container}>
-      <View style={styles.headerWrapper} >
-      <TodoHeader
-        title="Your Todo Playground"
-        subtitle="Add your tasks and stay productive today"
-        onLogout={logoutHandler}
-      />
+      <View style={styles.headerWrapper}>
+        <TodoHeader
+          title="Your Todo Playground"
+          subtitle="Add your tasks and stay productive today"
+          onLogout={() => logout()}
+        />
 
-      <TodoFilter filterType={filterType} onFilterChange={setFilterType} />
+        <TodoFilter filterType={filterType} onFilterChange={setFilterType} />
       </View>
 
       {isLoading || isFetching ? (
@@ -120,10 +99,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   headerWrapper: {
-  backgroundColor: colors.primary,
-  borderBottomColor: colors.grayMedium,
-  borderBottomWidth: 1
-},
+    backgroundColor: colors.primary,
+    borderBottomColor: colors.grayMedium,
+    borderBottomWidth: 1,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -137,6 +116,6 @@ const styles = StyleSheet.create({
   flatListContent: {
     paddingVertical: rSpacing(10),
     gap: rSpacing(20),
-    paddingHorizontal: rSpacing(20)
+    paddingHorizontal: rSpacing(20),
   },
 });

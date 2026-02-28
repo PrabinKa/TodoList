@@ -1,15 +1,15 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TodoListScreen from '../../screens/todo_list/TodoListScreen';
+import LoginScreen from '../../screens/login/LoginScreen';
 
 const Stack = createNativeStackNavigator();
 
-const AuthenticatedNavigator = () => {
+const AuthNavigator = () => {
   return (
       <Stack.Navigator screenOptions={{headerShown: false}} >
-          <Stack.Screen name='LodoList' component={TodoListScreen} />
+          <Stack.Screen name='Login' component={LoginScreen} />
       </Stack.Navigator>
   )
 }
 
-export default AuthenticatedNavigator;
+export default AuthNavigator;

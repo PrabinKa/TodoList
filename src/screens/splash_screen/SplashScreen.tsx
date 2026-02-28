@@ -1,49 +1,45 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store/store';
 import { colors } from '../../theme/colors';
-import { getFontSize, rSpacing } from '../../utils';
-import { useQuery } from '@tanstack/react-query';
-import { getUsersList } from '../../services/api';
-import { usersListActions } from '../../store/slice/usersList';
-import { User } from '../../types/users';
+import { getFontSize, rSpacing, SecureStorage } from '../../utils';
+import { STORAGE_KEY } from '../../constants/keys';
+import { navigationRef } from '../../utils/navigationRef';
 
 interface SplashScreenProps {
   navigation: any;
 }
 
 const SplashScreen: React.FC<SplashScreenProps> = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const accessToken = useSelector((state: RootState) => state.token.accessToken);
-
-  // Fetch users list
-  const { data: users, isLoading, isError } = useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: getUsersList,
-  });
-
-  console.log('user list data:', users)
-  console.log('is error:', isError)
-
-  // Save users to Redux when loaded
   useEffect(() => {
-    if (users && users.length > 0) {
-      dispatch(usersListActions.setUsersList(users));
-    }
-  }, [users, dispatch]);
+    const checkAuth = async () => {
+      try {
+        const token = await SecureStorage.getItem(STORAGE_KEY.ACCESS_TOKEN);
 
-  // Navigate when data is loaded
-  useEffect(() => {
-    if (!isLoading) {
-      if (accessToken) {
-        navigation.replace('Auth');
-      } else {
-        navigation.replace('UnAuth');
+        console.log('IS ACCESS TOKEN:', token)
+
+        if (token) {
+          navigationRef.reset({
+            index: 0,
+            routes: [{ name: 'AppScreen' }],
+          });
+        } else {
+          navigationRef.reset({
+            index: 0,
+            routes: [{ name: 'AuthScreen' }],
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        navigationRef.reset({
+          index: 0,
+          routes: [{ name: 'AuthScreen' }],
+        });
       }
-    }
-  }, [isLoading, accessToken, navigation]);
+    };
+
+    checkAuth();
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>

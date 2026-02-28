@@ -34,7 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {!!label && <Text style={styles.label}>{label}</Text>}
       <View
         style={[
           styles.inputWrapper,
@@ -59,11 +59,16 @@ const InputField: React.FC<InputFieldProps> = ({
             onPress={onTogglePassword}
           >
             <Text style={styles.toggleButtonText}>
-              {secureTextEntry ? <Ionicons name='eye' size={20} /> : <Ionicons name='eye-off' size={20} />}
+              {secureTextEntry ? (
+                <Ionicons name="eye" size={20} />
+              ) : (
+                <Ionicons name="eye-off" size={20} />
+              )}
             </Text>
           </TouchableOpacity>
         )}
       </View>
+      {error && <Text style={styles.errorTextStyle}>{error}</Text>}
     </View>
   );
 };
@@ -71,12 +76,12 @@ const InputField: React.FC<InputFieldProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginBottom: rSpacing(20),
+    gap: rSpacing(8)
   },
   label: {
     fontSize: getFontSize(14),
     fontWeight: '600',
     color: colors.textPrimary,
-    marginBottom: rSpacing(8),
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -108,10 +113,10 @@ const styles = StyleSheet.create({
   toggleButtonText: {
     fontSize: getFontSize(20),
   },
-  errorText: {
+  errorTextStyle: {
     fontSize: getFontSize(12),
+    fontWeight: 'bold',
     color: colors.error,
-    marginTop: rSpacing(4),
   },
 });
 

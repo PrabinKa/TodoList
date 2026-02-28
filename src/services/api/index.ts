@@ -1,7 +1,3 @@
-import { getUsersList } from "./users/Users";
-import { getTodoList } from "./todo/TodoList";
-
-export {
-    getUsersList,
-    getTodoList
-}
+export { getTodoList } from './todo/TodoList';
+export { login } from '../api/login/login';
+export { getUsersList } from '../api/users/Users';

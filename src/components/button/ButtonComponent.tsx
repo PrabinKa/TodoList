@@ -9,12 +9,16 @@ import { colors } from '../../theme/colors';
 import { getFontSize, rHeight, rSpacing } from '../../utils';
 
 interface ButtonComponentProps {
-    label: string;
-  isLoading: boolean;
+  label: string;
+  isLoading?: boolean;
   onPress: () => void;
 }
 
-const ButtonComponent: React.FC<ButtonComponentProps> = ({ label, isLoading, onPress }) => {
+const ButtonComponent: React.FC<ButtonComponentProps> = ({
+  label,
+  isLoading,
+  onPress,
+}) => {
   const { buttonContainer, buttonDisabled, buttonText } = styles;
   return (
     <TouchableOpacity

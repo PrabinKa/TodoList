@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ButtonComponent, InputField } from '../../components';
 import { colors } from '../../theme/colors';
 import { getFontSize, rSpacing, SecureStorage } from '../../utils';
-import { TLoginCredentials } from '../../types/login';
+import { LoginResponse, TLoginCredentials } from '../../types/login';
 import { useForm, Controller } from 'react-hook-form';
 import { login } from '../../services/api';
 import { useMutation } from '@tanstack/react-query';
@@ -20,6 +20,8 @@ import { STORAGE_KEY } from '../../constants/keys';
 import { useDispatch } from 'react-redux';
 import { userDetailsActions } from '../../store/slice/userDetails';
 import { navigationRef } from '../../utils/navigationRef';
+import { useTheme } from '../../context/ThemeContext';
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 interface LoginScreenProps {
   navigation: any;
@@ -27,7 +29,9 @@ interface LoginScreenProps {
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const dispatch = useDispatch();
-  const [secureTextEntry, setSecureTextEntry] = useState(false);
+  4;
+  const { theme } = useTheme();
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [loginError, setLoginError] = useState('');
   const {
     control,
@@ -37,7 +41,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   const mutation = useMutation({
     mutationFn: login,
-    onSuccess: async data => {
+    onSuccess: async (data: LoginResponse) => {
       const { accessToken, refreshToken, ...user } = data;
 
       // Store tokens in secure storage with encryption
@@ -53,11 +57,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           {
             name: 'AppScreen',
             state: {
-              routes: [{name: 'TodoList'}]
-            }
-          }
-        ]
-      })
+              routes: [{ name: 'TodoList' }],
+            },
+          },
+        ],
+      });
     },
     onError: (error: any) => {
       setLoginError(error?.response?.data?.message);
@@ -69,7 +73,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <KeyboardAvoidingView style={{ flex: 1 }}>
           <ScrollView
@@ -77,11 +83,51 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.welcomeTextStyles}>
-              Welcome back, please signin to continue
-            </Text>
+            <View style={{ alignItems: 'center', gap: rSpacing(50) }}>
+              <Text
+                style={[styles.welcomeTextStyles, { color: theme.textPrimary }]}
+              >
+                Welcome Back
+              </Text>
+              <View style={{gap: rSpacing(12), alignItems: 'center'}} >
+                <View
+                  style={{
+                    backgroundColor: theme.primary,
+                    padding: rSpacing(15),
+                    borderRadius: 12,
+                  }}
+                >
+                  <Ionicons
+                    name="checkmark-circle-outline"
+                    size={25}
+                    color="#FFF"
+                  />
+                </View>
+                <View style={{gap: rSpacing(6), alignItems: 'center'}} >
+                  <Text
+                    style={{
+                      color: theme.textPrimary,
+                      fontSize: getFontSize(30),
+                      fontWeight: '700',
+                    }}
+                  >
+                    Login to Taskly
+                  </Text>
+                  <Text
+                    style={{
+                      color: theme.textSecondary,
+                      fontSize: getFontSize(14),
+                      fontWeight: '500',
+                      textAlign: 'center'
+                    }}
+                  >
+                    Enter your details to manage your daily tasks effortlessly.
+                  </Text>
+                </View>
+              </View>
+            </View>
 
-            <View>
+            <View style={{marginTop: rSpacing(30)}} >
               <Controller
                 control={control}
                 name="username"
@@ -121,9 +167,15 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               />
             </View>
             {!!loginError && (
-              <Text style={styles.errorTextStyle}>{loginError}</Text>
+              <Text style={[styles.errorTextStyle, { color: theme.error }]}>
+                {loginError}
+              </Text>
             )}
-            <ButtonComponent isLoading={mutation.isPending} label="Sign In" onPress={handleSubmit(onSubmit)} />
+            <ButtonComponent
+              isLoading={mutation.isPending}
+              label="Sign In"
+              onPress={handleSubmit(onSubmit)}
+            />
           </ScrollView>
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
@@ -136,29 +188,19 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary,
   },
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
     paddingHorizontal: rSpacing(20),
     paddingVertical: rSpacing(15),
   },
   welcomeTextStyles: {
-    fontSize: getFontSize(20),
-    fontWeight: '500',
-    color: colors.grayDark,
-    marginBottom: rSpacing(40),
-  },
-  errorTextStyles: {
-    fontSize: getFontSize(14),
-    color: colors.error,
-    marginBottom: rSpacing(10),
+    fontSize: getFontSize(16),
+    fontWeight: 'bold',
   },
   errorTextStyle: {
     fontSize: getFontSize(12),
     fontWeight: 'bold',
-    color: colors.error,
     marginBottom: rSpacing(10),
   },
 });

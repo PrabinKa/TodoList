@@ -11,6 +11,7 @@ import { colors } from '../../theme/colors';
 import { rHeight, rSpacing } from '../../utils/responsive/layout';
 import { getFontSize } from '../../utils';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { useTheme } from '../../context/ThemeContext';
 
 interface InputFieldProps extends TextInputProps {
   label: string;
@@ -19,7 +20,7 @@ interface InputFieldProps extends TextInputProps {
   onTogglePassword?: () => void;
 }
 
-const InputField: React.FC<InputFieldProps> = ({
+export const InputField: React.FC<InputFieldProps> = ({
   label,
   placeholder,
   value,
@@ -31,21 +32,29 @@ const InputField: React.FC<InputFieldProps> = ({
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const { theme } = useTheme();
+
+  console.log('is focused:', isFocused);
 
   return (
     <View style={styles.container}>
-      {!!label && <Text style={styles.label}>{label}</Text>}
+      {!!label && (
+        <Text style={[styles.label, { color: theme.textPrimary }]}>
+          {label}
+        </Text>
+      )}
       <View
         style={[
           styles.inputWrapper,
+          { backgroundColor: theme.background, borderColor: theme.border },
           isFocused && styles.inputWrapperFocused,
           error && styles.inputWrapperError,
         ]}
       >
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: theme.textPrimary }]}
           placeholder={placeholder}
-          placeholderTextColor={colors.grayDark}
+          placeholderTextColor={'#374151'}
           value={value}
           onChangeText={onChangeText}
           secureTextEntry={secureTextEntry}
@@ -60,15 +69,19 @@ const InputField: React.FC<InputFieldProps> = ({
           >
             <Text style={styles.toggleButtonText}>
               {secureTextEntry ? (
-                <Ionicons name="eye" size={20} />
+                <Ionicons name="eye" size={20} color={theme.textPrimary} />
               ) : (
-                <Ionicons name="eye-off" size={20} />
+                <Ionicons name="eye-off" size={20}  color={theme.textPrimary}  />
               )}
             </Text>
           </TouchableOpacity>
         )}
       </View>
-      {error && <Text style={styles.errorTextStyle}>{error}</Text>}
+      {error && (
+        <Text style={[styles.errorTextStyle, { color: theme.error }]}>
+          {error}
+        </Text>
+      )}
     </View>
   );
 };
@@ -76,35 +89,31 @@ const InputField: React.FC<InputFieldProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginBottom: rSpacing(20),
-    gap: rSpacing(8)
+    gap: rSpacing(8),
   },
   label: {
     fontSize: getFontSize(14),
     fontWeight: '600',
-    color: colors.textPrimary,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
     borderRadius: rSpacing(12),
     borderWidth: 1,
-    borderColor: colors.grayMedium,
     overflow: 'hidden',
   },
   inputWrapperFocused: {
-    borderColor: colors.blueDark,
+    borderColor: colors.blue600,
     borderWidth: 1,
   },
   inputWrapperError: {
-    borderColor: colors.error,
+    borderColor: colors.error500,
   },
   input: {
     flex: 1,
     height: rHeight(46),
     paddingHorizontal: rSpacing(10),
     fontSize: getFontSize(14),
-    color: colors.textPrimary,
   },
   toggleButton: {
     paddingHorizontal: rSpacing(16),
@@ -116,8 +125,5 @@ const styles = StyleSheet.create({
   errorTextStyle: {
     fontSize: getFontSize(12),
     fontWeight: 'bold',
-    color: colors.error,
   },
 });
-
-export default InputField;

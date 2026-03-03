@@ -1,51 +1,79 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  StyleProp,
   StyleSheet,
   Text,
+  TextStyle,
   TouchableOpacity,
+  ViewStyle,
 } from 'react-native';
 import { colors } from '../../theme/colors';
 import { getFontSize, rHeight, rSpacing } from '../../utils';
+import { useTheme } from '../../context/ThemeContext';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { IconName } from '../../types/icon';
 
 interface ButtonComponentProps {
   label: string;
   isLoading?: boolean;
   onPress: () => void;
+  icon?: IconName;
+  containerStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
+  iconColor?: string;
 }
 
-const ButtonComponent: React.FC<ButtonComponentProps> = ({
+export const ButtonComponent: React.FC<ButtonComponentProps> = ({
   label,
   isLoading,
   onPress,
+  icon,
+  containerStyle,
+  textStyle,
+  iconColor,
 }) => {
   const { buttonContainer, buttonDisabled, buttonText } = styles;
+  const { theme } = useTheme();
   return (
     <TouchableOpacity
-      style={[buttonContainer, isLoading && buttonDisabled]}
+      style={[
+        buttonContainer,
+        isLoading && buttonDisabled,
+        { backgroundColor: theme.primary },
+        containerStyle,
+      ]}
       onPress={onPress}
       disabled={isLoading}
-      activeOpacity={0.8}
+      activeOpacity={0.9}
     >
+      {icon && (
+        <Ionicons
+          name={icon}
+          size={20}
+          color={iconColor || colors.gray50}
+        />
+      )}
       {isLoading ? (
-        <ActivityIndicator color={colors.primary} size="small" />
+        <ActivityIndicator color={theme.textPrimary} size="small" />
       ) : (
-        <Text style={buttonText}>{label}</Text>
+        <Text style={[buttonText, textStyle || {color: colors.gray50}]}>
+          {label}
+        </Text>
       )}
     </TouchableOpacity>
   );
 };
 
-export default ButtonComponent;
-
 const styles = StyleSheet.create({
   buttonContainer: {
-    backgroundColor: colors.blueDark,
     height: rHeight(56),
     borderRadius: rSpacing(12),
+    flexDirection: 'row',
+    gap: rSpacing(8),
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: colors.blueDark,
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
@@ -58,7 +86,6 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   buttonText: {
-    color: colors.primary,
     fontSize: getFontSize(16),
     fontWeight: '700',
   },

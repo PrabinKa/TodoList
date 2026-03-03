@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors } from '../../theme/colors';
 import { getFontSize, rSpacing } from '../../utils';
+import { useTheme } from '../../context/ThemeContext';
+import { colors } from '../../theme/colors';
 
 type FilterType = 'all' | 'completed' | 'pending';
 
@@ -10,7 +11,11 @@ interface TodoFilterProps {
   onFilterChange: (type: FilterType) => void;
 }
 
-const TodoFilter: React.FC<TodoFilterProps> = ({ filterType, onFilterChange }) => {
+export const TodoFilter: React.FC<TodoFilterProps> = ({
+  filterType,
+  onFilterChange,
+}) => {
+  const { theme } = useTheme();
   const filters: { label: string; value: FilterType }[] = [
     { label: 'All', value: 'all' },
     { label: 'Completed', value: 'completed' },
@@ -18,16 +23,28 @@ const TodoFilter: React.FC<TodoFilterProps> = ({ filterType, onFilterChange }) =
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {filters.map(filter => {
         const isActive = filterType === filter.value;
         return (
           <TouchableOpacity
             key={filter.value}
-            style={[styles.button, isActive && styles.buttonActive]}
+            style={[
+              styles.button,
+              {
+                backgroundColor: isActive
+                  ? theme.primary
+                  : colors.gray200,
+              },
+            ]}
             onPress={() => onFilterChange(filter.value)}
           >
-            <Text style={[styles.text, isActive && styles.textActive]}>
+            <Text
+              style={[
+                styles.text,
+                { color: isActive ? colors.gray50 : theme.textSecondary },
+              ]}
+            >
               {filter.label}
             </Text>
           </TouchableOpacity>
@@ -37,32 +54,21 @@ const TodoFilter: React.FC<TodoFilterProps> = ({ filterType, onFilterChange }) =
   );
 };
 
-export default TodoFilter;
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     gap: rSpacing(10),
     paddingVertical: rSpacing(10),
-    paddingHorizontal: rSpacing(20)
+    paddingHorizontal: rSpacing(20),
   },
   button: {
     paddingHorizontal: rSpacing(16),
-    paddingVertical: rSpacing(5),
-    borderRadius: 20,
-    backgroundColor: colors.primary,
-    borderWidth: 1,
-    borderColor: colors.grayMedium,
-  },
-  buttonActive: {
-    backgroundColor: colors.grayDark,
+    paddingVertical: rSpacing(6),
+    borderRadius: 30,
   },
   text: {
     fontSize: getFontSize(14),
-    color: colors.grayDark,
     fontWeight: '500',
-  },
-  textActive: {
-    color: colors.primary,
   },
 });

@@ -1,34 +1,47 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { getFontSize, rSpacing } from '../../utils';
-import { colors } from '../../theme/colors';
-import Ionicons from '@react-native-vector-icons/ionicons';
+import { useTheme } from '../../context/ThemeContext';
+import { store } from '../../store/store';
 
 interface TodoHeaderProps {
   title: string;
   subtitle: string;
-  onLogout: () => void;
+  onPress: () => void;
 }
 
-const TodoHeader: React.FC<TodoHeaderProps> = ({
+export const TodoHeader: React.FC<TodoHeaderProps> = ({
   title,
   subtitle,
-  onLogout,
+  onPress,
 }) => {
+  const { theme } = useTheme();
+  const { userDetails } = store.getState();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+        <Text style={[styles.title, { color: theme.textPrimary }]}>
+          {title}
+        </Text>
+        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+          {subtitle}
+        </Text>
       </View>
-      <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-        <Ionicons name="exit-outline" size={30} color={colors.primary} />
+      <TouchableOpacity
+        activeOpacity={0.7}
+        style={[styles.profileSection, { backgroundColor: theme.card }]}
+        onPress={onPress}
+      >
+        <Image
+          source={{ uri: userDetails.userDetails?.image }}
+          resizeMode="cover"
+          style={{ height: '100%', width: '100%' }}
+        />
       </TouchableOpacity>
     </View>
   );
 };
-
-export default TodoHeader;
 
 const styles = StyleSheet.create({
   container: {
@@ -37,24 +50,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: rSpacing(10),
     paddingHorizontal: rSpacing(20),
-    backgroundColor: colors.primary,
   },
   textContainer: {
-    gap: rSpacing(5),
+    gap: rSpacing(2),
   },
   title: {
-    fontSize: getFontSize(18),
-    color: colors.grayDark,
+    fontSize: getFontSize(26),
     fontWeight: '600',
   },
   subtitle: {
-    fontSize: getFontSize(14),
-    color: colors.grayDark,
+    fontSize: getFontSize(12),
   },
-  logoutButton: {
-    backgroundColor: colors.blueDark,
-    paddingHorizontal: rSpacing(8),
-    paddingVertical: rSpacing(5),
-    borderRadius: 8,
+  profileSection: {
+    height: 40,
+    width: 40,
+    borderRadius: 25,
+    overflow: 'hidden',
+    elevation: 1,
   },
 });

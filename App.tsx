@@ -5,6 +5,8 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './src/store/store';
 import RootNavigator from './src/navigation/root_nav/RootNavigator';
+import { ThemeProvider } from './src/context/ThemeContext';
+import { ThemedStatusBar } from './src/utils';
 
 const queryClient = new QueryClient();
 
@@ -14,7 +16,10 @@ const App = () => {
       <PersistGate loading={null} persistor={persistor}>
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
-            <RootNavigator />
+            <ThemeProvider>
+              <ThemedStatusBar />
+              <RootNavigator />
+            </ThemeProvider>
           </SafeAreaProvider>
         </QueryClientProvider>
       </PersistGate>

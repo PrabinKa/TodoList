@@ -1,13 +1,8 @@
-import InputField from "./input/InputField";
-import ButtonComponent from "./button/ButtonComponent";
-import TodoCard from "./todo_card/TodoCard";
-import TodoFilter from "./todo_list_filter/TodoFilter";
-import TodoHeader from "./todo_list_header/TodoHeader";
-
-export {
-    InputField,
-    ButtonComponent,
-    TodoCard,
-    TodoFilter,
-    TodoHeader
-}
+export { InputField } from './input/InputField';
+export { ButtonComponent } from './button/ButtonComponent';
+export { TodoCard } from './todo_card/TodoCard';
+export { TodoFilter } from './todo_list_filter/TodoFilter';
+export { TodoHeader } from './todo_list_header/TodoHeader';
+export { ProfileInfoRow } from './profile/ProfileInfoRow';
+export { Header } from './header/Header';
+export { SettingsButton } from './settings/SettingsButton';

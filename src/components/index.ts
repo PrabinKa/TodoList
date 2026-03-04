@@ -6,3 +6,4 @@ export { TodoHeader } from './todo_list_header/TodoHeader';
 export { ProfileInfoRow } from './profile/ProfileInfoRow';
 export { Header } from './header/Header';
 export { SettingsButton } from './settings/SettingsButton';
+export { AppModal  } from './modal/AppModal';

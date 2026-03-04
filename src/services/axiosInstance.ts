@@ -108,7 +108,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
 
-        await logout();
+        await logout(true);
 
         throw error;
       } finally {

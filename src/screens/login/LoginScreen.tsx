@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ButtonComponent, InputField } from '../../components';
-import { colors } from '../../theme/colors';
 import { getFontSize, rSpacing, SecureStorage } from '../../utils';
 import { LoginResponse, TLoginCredentials } from '../../types/login';
 import { useForm, Controller } from 'react-hook-form';

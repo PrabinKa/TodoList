@@ -1,19 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { store } from '../../store/store';
-import { getFontSize, rHeight, rSpacing, rWidth } from '../../utils';
+import { getFontSize, logout, rHeight, rSpacing, rWidth } from '../../utils';
 import { colors } from '../../theme/colors';
-import { ButtonComponent, Header, ProfileInfoRow } from '../../components';
+import {
+  AppModal,
+  ButtonComponent,
+  Header,
+  ProfileInfoRow,
+} from '../../components';
 
 interface ProfileScreenProps {
   navigation: any;
 }
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
-  const { theme } = useTheme();
+  const { isDarkMode, theme } = useTheme();
   const { userDetails } = store.getState();
+  const [isVisible, setIsVisible] = useState(false);
   const { userDetails: user } = userDetails;
 
   const Divider = () => (
@@ -102,17 +108,29 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
         <ButtonComponent
           icon="settings-outline"
           label="Account Settings"
-          onPress={() => {navigation.navigate('Settings')}}
+          onPress={() => {
+            navigation.navigate('Settings');
+          }}
         />
         <ButtonComponent
           icon="log-out-outline"
           label="Logout"
-          onPress={() => {}}
+          onPress={() => {
+            setIsVisible(true);
+          }}
           containerStyle={{ backgroundColor: colors.error100 }}
           textStyle={{ color: colors.error500 }}
           iconColor={colors.error500}
         />
       </View>
+      <AppModal
+        isVisible={isVisible}
+        message="Are you sure you want to logout?"
+        type="info"
+        isDarkMode={isDarkMode}
+        onCancel={() => setIsVisible(false)}
+        onConfirm={() => {logout(false)}}
+      />
     </SafeAreaView>
   );
 };

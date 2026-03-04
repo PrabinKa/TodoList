@@ -11,7 +11,15 @@ const Stack = createNativeStackNavigator();
 const RootNavigator = () => {
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right',
+          animationDuration: 250,
+          gestureEnabled: true,
+          fullScreenGestureEnabled: true,
+        }}
+      >
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="AuthScreen" component={AuthNavigator} />
         <Stack.Screen name="AppScreen" component={AppNavigator} />

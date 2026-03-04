@@ -7,7 +7,7 @@ import { store } from '../../store/store';
 
 let isLoggingOut = false;
 
-export const logout = async () => {
+export const logout = async (isSessionExpired: boolean) => {
   //Prevents from multiple logout alert when multiple api request fails
   if (isLoggingOut) {
     return;
@@ -37,12 +37,21 @@ export const logout = async () => {
     isLoggingOut = false;
   };
 
-  Alert.alert('Session expired!', 'Please login again.', [
-    {
-      text: 'OK',
-      onPress: () => {
-        removeStorage();
-      },
-    },
-  ]);
+  // Show alert ONLY if session expired
+  if (isSessionExpired) {
+    Alert.alert(
+      'Session expired!',
+      'Please login again.',
+      [
+        {
+          text: 'OK',
+          onPress: () => removeStorage,
+        },
+      ],
+      { cancelable: false },
+    );
+  } else {
+    // Manual logout case
+    await removeStorage();
+  }
 };

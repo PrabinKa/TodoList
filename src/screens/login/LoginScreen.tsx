@@ -23,12 +23,11 @@ import { useTheme } from '../../context/ThemeContext';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
 interface LoginScreenProps {
-  navigation: any;
+  navigation?: any;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+const LoginScreen: React.FC<LoginScreenProps> = () => {
   const dispatch = useDispatch();
-  4;
   const { theme } = useTheme();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [loginError, setLoginError] = useState('');

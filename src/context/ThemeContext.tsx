@@ -85,7 +85,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       isSystemTheme,
       systemTheme,
     }),
-    [theme, isDarkMode, toggleTheme],
+    [theme, isDarkMode, toggleTheme, isSystemTheme, systemTheme],
   );
 
   return (

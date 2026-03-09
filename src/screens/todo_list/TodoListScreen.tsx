@@ -69,8 +69,10 @@ const TodoListScreen: React.FC<TodoListScreenProps> = ({ navigation }) => {
     [isFetching, isFetchingNextPage],
   );
 
-  const todosList =
-    data?.pages.flatMap((page: TodoListResponse) => page.todos) ?? [];
+const todosList = useMemo(
+  () => data?.pages.flatMap((page: TodoListResponse) => page.todos) ?? [],
+  [data?.pages],
+);
 
   // Filter the list of data
   const filteredTodos = useMemo(() => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { getFontSize, rSpacing } from '../../utils';
 import { Todo } from '../../types/todo';
@@ -6,6 +6,7 @@ import Skeleton from 'react-native-reanimated-skeleton';
 import { useTheme } from '../../context/ThemeContext';
 import CheckBox from '@react-native-community/checkbox';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { useUpdateTodo } from '../../services/hooks/useUpdateTodo';
 
 interface TodoCardProps {
   item: Todo;
@@ -14,9 +15,14 @@ interface TodoCardProps {
 
 export const TodoCard: React.FC<TodoCardProps> = ({ item, isLoading }) => {
   const { theme } = useTheme();
-  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const { mutate: updateTodo, isPending } = useUpdateTodo();
 
-
+  const handleToggleTodo = () => {
+    updateTodo({
+      id: item.id,
+      isCompleted: !item.completed,
+    });
+  };
 
   return (
     <View
@@ -48,7 +54,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({ item, isLoading }) => {
             marginLeft: 32,
             marginTop: -36,
             borderRadius: 6,
-                        marginBottom: rSpacing(16),
+            marginBottom: rSpacing(16),
           },
 
           // Bottom Row
@@ -73,9 +79,10 @@ export const TodoCard: React.FC<TodoCardProps> = ({ item, isLoading }) => {
           {/* Top Row */}
           <View style={styles.topRow}>
             <CheckBox
-              value={toggleCheckBox}
+              value={item.completed}
+              disabled={isPending}
               boxType="circle"
-              onValueChange={setToggleCheckBox}
+              onValueChange={handleToggleTodo}
               tintColors={{
                 true: theme.success,
                 false: theme.border,
@@ -90,10 +97,10 @@ export const TodoCard: React.FC<TodoCardProps> = ({ item, isLoading }) => {
                   styles.title,
                   {
                     color: theme.textPrimary,
-                    textDecorationLine: toggleCheckBox
+                    textDecorationLine: item.completed
                       ? 'line-through'
                       : 'none',
-                    opacity: toggleCheckBox ? 0.6 : 1,
+                    opacity: item.completed ? 0.6 : 1,
                   },
                 ]}
                 numberOfLines={3}
@@ -183,7 +190,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: rSpacing(7)
+    marginLeft: rSpacing(7),
   },
 
   statusLeft: {

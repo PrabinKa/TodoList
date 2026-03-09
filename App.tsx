@@ -4,9 +4,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './src/store/store';
-import RootNavigator from './src/navigation/root_nav/RootNavigator';
 import { ThemeProvider } from './src/context/ThemeContext';
 import { ThemedStatusBar } from './src/utils';
+import Root from './src/Root';
 
 const queryClient = new QueryClient();
 
@@ -18,7 +18,7 @@ const App = () => {
           <SafeAreaProvider>
             <ThemeProvider>
               <ThemedStatusBar />
-              <RootNavigator />
+              <Root/>
             </ThemeProvider>
           </SafeAreaProvider>
         </QueryClientProvider>

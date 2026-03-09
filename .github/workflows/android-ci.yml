@@ -13,16 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Enable Corepack & set Yarn 4
+        run: |
+          corepack enable
+          corepack prepare yarn@stable --activate
+
       - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'yarn'
-
-      - name: Enable Corepack & set Yarn 4
-        run: |
-          corepack enable
-          corepack prepare yarn@stable --activate
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile

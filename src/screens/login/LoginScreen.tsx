@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ButtonComponent, InputField } from '../../components';
-import { getFontSize, rSpacing, SecureStorage } from '../../utils';
+import { getFontSize, Haptics, rSpacing, SecureStorage } from '../../utils';
 import { LoginResponse, TLoginCredentials } from '../../types/login';
 import { useForm, Controller } from 'react-hook-form';
 import { login } from '../../services/api';
@@ -67,6 +67,7 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
   });
 
   const onSubmit = (data: TLoginCredentials) => {
+    Haptics.impact('heavy');
     mutation.mutate(data);
   };
 

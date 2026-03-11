@@ -69,10 +69,10 @@ const TodoListScreen: React.FC<TodoListScreenProps> = ({ navigation }) => {
     [isFetching, isFetchingNextPage],
   );
 
-const todosList = useMemo(
-  () => data?.pages.flatMap((page: TodoListResponse) => page.todos) ?? [],
-  [data?.pages],
-);
+  const todosList = useMemo(
+    () => data?.pages.flatMap((page: TodoListResponse) => page.todos) ?? [],
+    [data?.pages],
+  );
 
   // Filter the list of data
   const filteredTodos = useMemo(() => {
@@ -120,7 +120,9 @@ const todosList = useMemo(
         <TodoHeader
           title="My Tasks"
           subtitle={formattedDate}
-          onPress={() => {navigation.navigate('Profile')}}
+          onPress={() => {
+            navigation.navigate('Profile');
+          }}
         />
 
         <TodoFilter filterType={filterType} onFilterChange={setFilterType} />

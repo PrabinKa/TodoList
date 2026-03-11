@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { getFontSize, rSpacing } from '../../utils';
+import { getFontSize, Haptics, rSpacing } from '../../utils';
 import { Todo } from '../../types/todo';
 import Skeleton from 'react-native-reanimated-skeleton';
 import { useTheme } from '../../context/ThemeContext';
@@ -18,6 +18,7 @@ export const TodoCard: React.FC<TodoCardProps> = ({ item, isLoading }) => {
   const { mutate: updateTodo, isPending } = useUpdateTodo();
 
   const handleToggleTodo = () => {
+    Haptics.notification('success');
     updateTodo({
       id: item.id,
       isCompleted: !item.completed,

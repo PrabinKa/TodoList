@@ -10,6 +10,14 @@
     "test": "jest",
     "clean": "cd android && ./gradlew clean && cd .."
   },
+  "codegenConfig": {
+    "name": "TodoNativeModules",
+    "type": "modules",
+    "jsSrcsDir": "specs",
+    "android": {
+      "javaPackageName": "com.todolist"
+    }
+  },
   "dependencies": {
     "@react-native-community/checkbox": "^0.5.20",
     "@react-native-firebase/app": "^23.8.6",

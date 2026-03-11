@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useMemo,
   useEffect,
+  useCallback,
 } from 'react';
 import { lightTheme, darkTheme } from '../theme/theme';
 import { useColorScheme } from 'react-native';
@@ -51,10 +52,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const theme: Theme = isDarkMode ? darkTheme : lightTheme;
 
-  const toggleTheme = (isDark: boolean) => {
+  const toggleTheme = useCallback((isDark: boolean) => {
     setIsDarkMode(isDark);
     setIsSystemTheme(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (colorScheme) {
@@ -67,7 +68,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
   }, [colorScheme]);
 
-  const systemTheme = () => {
+  const systemTheme = useCallback(() => {
     if (colorScheme === 'dark') {
       setIsDarkMode(true);
     } else {
@@ -75,7 +76,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
 
     setIsSystemTheme(true);
-  };
+  }, []);
 
   const currentValue = useMemo(
     () => ({

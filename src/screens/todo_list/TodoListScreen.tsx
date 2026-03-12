@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getTodoList } from '../../services/api';
 import { Todo, TodoListResponse } from '../../types/todo';
-import { getFontSize, rSpacing } from '../../utils';
+import { getFontSize, rSpacing, scheduleTodoReminder } from '../../utils';
 import { TodoCard, TodoFilter, TodoHeader } from '../../components';
 import { useTheme } from '../../context/ThemeContext';
 import { FooterSkeleton } from './FooterSkeleton';
@@ -102,6 +102,14 @@ const TodoListScreen: React.FC<TodoListScreenProps> = ({ navigation }) => {
 
     return null;
   };
+
+  useEffect(() => {
+    scheduleTodoReminder(
+      '1234383737',
+      'Testing native local notification handler',
+      Date.now() + 60000,
+    );
+  }, []);
 
   return (
     <SafeAreaView

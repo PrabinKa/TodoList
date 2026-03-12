@@ -4,3 +4,4 @@ export { SecureStorage } from './storage/storage';
 export { logout } from './auth_service/authService';
 export { ThemedStatusBar } from './statusbar/ThemedStatusBar';
 export { Haptics } from  './haptics/Haptics';
+export { scheduleTodoReminder, cancelNotification } from './notifications/scheduleTodoReminder';

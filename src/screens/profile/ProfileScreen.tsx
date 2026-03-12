@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { store } from '../../store/store';
-import { getFontSize, logout, rHeight, rSpacing, rWidth } from '../../utils';
+import { getFontSize, Haptics, logout, rHeight, rSpacing, rWidth } from '../../utils';
 import { colors } from '../../theme/colors';
 import {
   AppModal,
@@ -109,6 +109,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
           icon="settings-outline"
           label="Account Settings"
           onPress={() => {
+            Haptics.impact('medium');
             navigation.navigate('Settings');
           }}
         />

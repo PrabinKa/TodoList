@@ -5,6 +5,7 @@ export const scheduleTodoReminder = (
   title: string,
   timeStamp: number,
 ) => {
+  console.log('Schedule todo reminder')
   NativeNotifications.scheduleNotification(
     id,
     title,

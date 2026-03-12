@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../context/ThemeContext';
 import { Header, SettingsButton } from '../../components';
-import { getFontSize, rSpacing } from '../../utils';
+import { getFontSize, Haptics, rSpacing } from '../../utils';
 import { colors } from '../../theme/colors';
 
 const SettingsScreen = () => {
@@ -54,6 +54,7 @@ const SettingsScreen = () => {
           icon="bulb-outline"
           isActive={!isDarkMode && !isSystemTheme}
           onPress={() => {
+            Haptics.impact('medium');
             toggleTheme(false);
           }}
         />
@@ -62,6 +63,7 @@ const SettingsScreen = () => {
           icon="moon-outline"
           isActive={isDarkMode && !isSystemTheme}
           onPress={() => {
+            Haptics.impact('medium');
             toggleTheme(true);
           }}
         />
@@ -70,6 +72,7 @@ const SettingsScreen = () => {
           icon="settings-outline"
           isActive={isSystemTheme}
           onPress={() => {
+            Haptics.impact('medium');
             systemTheme();
           }}
         />

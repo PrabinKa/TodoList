@@ -3,7 +3,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../../context/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
-import { getFontSize, rHeight, rSpacing } from '../../utils';
+import { getFontSize, Haptics, rHeight, rSpacing } from '../../utils';
 
 interface HeaderProps {
   title: string;
@@ -22,7 +22,10 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
     >
       <Pressable
         style={styles.backButton}
-        onPress={() => navigation.goBack()}
+        onPress={() => {
+          navigation.goBack();
+          Haptics.impact('medium');
+        }}
       >
         <Ionicons
           name="chevron-back-sharp"

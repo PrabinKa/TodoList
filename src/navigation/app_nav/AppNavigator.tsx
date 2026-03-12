@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TodoListScreen from '../../screens/todo_list/TodoListScreen';
 import ProfileScreen from '../../screens/profile/ProfileScreen';
 import SettingsScreen from '../../screens/settings/SettingsScreen';
+import AddTodoScreen from '../../screens/add_todo/AddTodoScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ const AppNavigator = () => {
       <Stack.Screen name="TodoList" component={TodoListScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name="AddTodo" component={AddTodoScreen} />
     </Stack.Navigator>
   );
 };

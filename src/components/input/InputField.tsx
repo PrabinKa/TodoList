@@ -34,8 +34,6 @@ export const InputField: React.FC<InputFieldProps> = ({
   const [isFocused, setIsFocused] = useState(false);
   const { theme } = useTheme();
 
-  console.log('is focused:', isFocused);
-
   return (
     <View style={styles.container}>
       {!!label && (
@@ -46,13 +44,24 @@ export const InputField: React.FC<InputFieldProps> = ({
       <View
         style={[
           styles.inputWrapper,
-          { backgroundColor: theme.background, borderColor: theme.border },
+          {
+            backgroundColor: theme.background,
+            borderColor: theme.border,
+            alignItems: rest?.multiline ? 'flex-start' : 'center',
+          },
           isFocused && styles.inputWrapperFocused,
           error && styles.inputWrapperError,
         ]}
       >
         <TextInput
-          style={[styles.input, { color: theme.textPrimary }]}
+          style={[
+            styles.input,
+            {
+              color: theme.textPrimary,
+              height: rest?.multiline ? rHeight(90) : rHeight(46),
+              textAlignVertical: rest.multiline ? 'top' : 'center',
+            },
+          ]}
           placeholder={placeholder}
           placeholderTextColor={'#374151'}
           value={value}
@@ -60,6 +69,7 @@ export const InputField: React.FC<InputFieldProps> = ({
           secureTextEntry={secureTextEntry}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          cursorColor={colors.blue500}
           {...rest}
         />
         {showPasswordToggle && (
@@ -71,7 +81,7 @@ export const InputField: React.FC<InputFieldProps> = ({
               {secureTextEntry ? (
                 <Ionicons name="eye" size={20} color={theme.textPrimary} />
               ) : (
-                <Ionicons name="eye-off" size={20}  color={theme.textPrimary}  />
+                <Ionicons name="eye-off" size={20} color={theme.textPrimary} />
               )}
             </Text>
           </TouchableOpacity>
@@ -97,7 +107,6 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
     borderRadius: rSpacing(12),
     borderWidth: 1,
     overflow: 'hidden',
@@ -111,7 +120,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: rHeight(46),
     paddingHorizontal: rSpacing(10),
     fontSize: getFontSize(14),
   },

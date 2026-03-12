@@ -9,7 +9,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { colors } from '../../theme/colors';
-import { getFontSize, rHeight, rSpacing } from '../../utils';
+import { getFontSize, Haptics, rHeight, rSpacing } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { IconName } from '../../types/icon';
@@ -43,21 +43,20 @@ export const ButtonComponent: React.FC<ButtonComponentProps> = ({
         { backgroundColor: theme.primary },
         containerStyle,
       ]}
-      onPress={onPress}
+      onPress={() => {
+        onPress();
+        Haptics.impact('medium');
+      }}
       disabled={isLoading}
       activeOpacity={0.9}
     >
       {icon && (
-        <Ionicons
-          name={icon}
-          size={20}
-          color={iconColor || colors.gray50}
-        />
+        <Ionicons name={icon} size={20} color={iconColor || colors.gray50} />
       )}
       {isLoading ? (
         <ActivityIndicator color={theme.textPrimary} size="small" />
       ) : (
-        <Text style={[buttonText, textStyle || {color: colors.gray50}]}>
+        <Text style={[buttonText, textStyle || { color: colors.gray50 }]}>
           {label}
         </Text>
       )}

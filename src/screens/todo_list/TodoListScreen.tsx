@@ -6,15 +6,25 @@ import {
   RefreshControl,
   Text,
   ListRenderItem,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getTodoList } from '../../services/api';
 import { Todo, TodoListResponse } from '../../types/todo';
-import { getFontSize, rSpacing, scheduleTodoReminder } from '../../utils';
+import {
+  getFontSize,
+  Haptics,
+  rHeight,
+  rSpacing,
+  rWidth,
+  scheduleTodoReminder,
+} from '../../utils';
 import { TodoCard, TodoFilter, TodoHeader } from '../../components';
 import { useTheme } from '../../context/ThemeContext';
 import { FooterSkeleton } from './FooterSkeleton';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { colors } from '../../theme/colors';
 
 interface TodoListScreenProps {
   navigation: any;
@@ -129,6 +139,7 @@ const TodoListScreen: React.FC<TodoListScreenProps> = ({ navigation }) => {
           title="My Tasks"
           subtitle={formattedDate}
           onPress={() => {
+            Haptics.impact('medium');
             navigation.navigate('Profile');
           }}
         />
@@ -160,6 +171,16 @@ const TodoListScreen: React.FC<TodoListScreenProps> = ({ navigation }) => {
         ListFooterComponent={isFetchingNextPage ? <FooterSkeleton /> : null}
         ListEmptyComponent={renderEmptyComponent}
       />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('AddTodo');
+          Haptics.impact('medium');
+        }}
+        activeOpacity={0.8}
+        style={styles.addButtonContainer}
+      >
+        <Ionicons name="add-sharp" size={30} color={theme.textPrimary} />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -197,5 +218,14 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: getFontSize(16),
     textAlign: 'center',
+  },
+  addButtonContainer: {
+    backgroundColor: colors.blue400,
+    position: 'absolute',
+    bottom: rHeight(20),
+    right: rWidth(20),
+    padding: rSpacing(10),
+    borderRadius: 50,
+    elevation: 2,
   },
 });

@@ -11,3 +11,7 @@ export interface TodoListResponse {
     todos: Todo[];
     total: number;
 }
+
+export interface TAddTodo {
+  todo: string
+}

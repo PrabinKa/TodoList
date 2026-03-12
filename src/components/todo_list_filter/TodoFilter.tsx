@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { getFontSize, rSpacing } from '../../utils';
+import { getFontSize, Haptics, rSpacing } from '../../utils';
 import { useTheme } from '../../context/ThemeContext';
 import { colors } from '../../theme/colors';
 
@@ -37,7 +37,10 @@ export const TodoFilter: React.FC<TodoFilterProps> = ({
                   : colors.gray200,
               },
             ]}
-            onPress={() => onFilterChange(filter.value)}
+            onPress={() => {
+              onFilterChange(filter.value);
+              Haptics.impact('medium');
+            }}
           >
             <Text
               style={[
